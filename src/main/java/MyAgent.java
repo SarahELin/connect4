@@ -16,7 +16,7 @@ public class MyAgent extends Agent {
    * @param game The game the agent will be playing.
    * @param iAmRed True if the agent is Red, False if the agent is Yellow.
    */
-  public MyAgent(Connect4Game game, boolean iAmRed) {
+  public MyAgent(Connect4Game game, boolean iAmRed) { //red has 1st move
     super(game, iAmRed);
     random = new Random();
   }
@@ -109,7 +109,25 @@ public class MyAgent extends Agent {
    * @return the column that would allow the agent to win.
    */
   public int iCanWin() {
-    return 0;
+
+    //Find my vertical win
+    int track = 0;
+    int i = 0;
+    for(i =0; i < 7; i++){ //go thru each column
+      Connect4Column a = myGame.getColumn(i);
+      int low = getLowestEmptyIndex(a); //find lowest empty slot
+      //System.out.println("low "+low);
+      if(low < 3) { //there must be at least 3 pieces in column already
+        for (int j = low + 1; j <= low + 3; j++) { //top down search
+          if (a.getSlot(j).getIsRed()) track++; //if red piece
+          else if (!a.getSlot(j).getIsRed()) track =0;
+          //System.out.println(track);
+        }
+      }
+      if(track==3) break;
+      track =0;
+    }
+    return i;
   }
 
   /**
@@ -122,7 +140,7 @@ public class MyAgent extends Agent {
    * @return the column that would allow the opponent to win.
    */
   public int theyCanWin() {
-    return 0;
+    return(0);
   }
 
   /**
@@ -133,4 +151,7 @@ public class MyAgent extends Agent {
   public String getName() {
     return "My Agent";
   }
+
+
 }
+
