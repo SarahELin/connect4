@@ -137,36 +137,36 @@ public class MyAgent extends Agent {
       if(trackV==3) break;
       trackV =0;
     }
-    //return i;
+    return i;
 
-    //Find horizontal win --> needs to combined with vertical later
-//    int trackH = 0;
-//    int prevPos = getLowestEmptyIndex(myGame.getColumn(0))+1;
-//    slot prev = myGame.getColumn(0).getSlot(prevPos); //save prev token
-//    int gap = -1;
-//    for (i = 0; i < 7; i++) { //traverse each column
-//      Connect4Column a = myGame.getColumn(i);
-//      int low = getLowestEmptyIndex(a)+1; //get top token
-//      slot check = a.getSlot(low);
-//      if(gap != -1) //there is already gap bigger than 1
-//      {
-//        trackH = 0;
-//
-//      }
-//      else if(gap == -1) { //there is not a gap yet
-//
-//      }
-//      else if(prev.isRed && check.isRed() && (prevPos == low)){ //if prev and curr are red AND same row
-//        trackH++;
-//      }
-//      if(trackH ==3 && (i+1 < 7 && getLowestEmptyIndex(myGame.getColumn(i+1)) == prevPos + 1){
-//
-//      }
-//
-//      if(!prev.isRed || !check.isRed() || )
-//      prevPos = low;
-//      prev = check;
-//    }
+    Find horizontal win --> needs to combined with vertical later
+    int trackH = 0;
+    int prevPos = getLowestEmptyIndex(myGame.getColumn(0))+1;
+    slot prev = myGame.getColumn(0).getSlot(prevPos); //save prev token
+    int gap = -1;
+    for (i = 0; i < 7; i++) { //traverse each column
+      Connect4Column a = myGame.getColumn(i);
+      int low = getLowestEmptyIndex(a)+1; //get top token
+      slot check = a.getSlot(low);
+      if(gap != -1) //there is already gap bigger than 1
+      {
+        trackH = 0;
+
+      }
+      else if(gap == -1) { //there is not a gap yet
+
+      }
+      else if(prev.isRed && check.isRed() && (prevPos == low)){ //if prev and curr are red AND same row
+        trackH++;
+      }
+      if(trackH ==3 && (i+1 < 7 && getLowestEmptyIndex(myGame.getColumn(i+1)) == prevPos + 1){
+
+      }
+
+      if(!prev.isRed || !check.isRed() || )
+      prevPos = low;
+      prev = check;
+    }
 
     return i;
   }
