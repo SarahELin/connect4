@@ -108,25 +108,66 @@ public class MyAgent extends Agent {
    *
    * @return the column that would allow the agent to win.
    */
+
+  /*
+
+  0
+  1
+  2
+  3
+  4
+  5
+    0 1 2 3 4 5 6
+
+  */
   public int iCanWin() {
 
     //Find my vertical win
-    int track = 0;
+    int trackV = 0;
     int i = 0;
     for(i =0; i < 7; i++){ //go thru each column
       Connect4Column a = myGame.getColumn(i);
-      int low = getLowestEmptyIndex(a); //find lowest empty slot
-      //System.out.println("low "+low);
+      int low = getLowestEmptyIndex(a)+1; //find top token
       if(low < 3) { //there must be at least 3 pieces in column already
-        for (int j = low + 1; j <= low + 3; j++) { //top down search
-          if (a.getSlot(j).getIsRed()) track++; //if red piece
-          else if (!a.getSlot(j).getIsRed()) track =0;
-          //System.out.println(track);
+        for (int j = low; j <= low + 3; j++) { //top down search
+          if (a.getSlot(j).getIsRed()) trackV++; //if red piece
+          else if (!a.getSlot(j).getIsRed()) trackV =0;
         }
       }
-      if(track==3) break;
-      track =0;
+      if(trackV==3) break;
+      trackV =0;
     }
+    //return i;
+
+    //Find horizontal win --> needs to combined with vertical later
+//    int trackH = 0;
+//    int prevPos = getLowestEmptyIndex(myGame.getColumn(0))+1;
+//    slot prev = myGame.getColumn(0).getSlot(prevPos); //save prev token
+//    int gap = -1;
+//    for (i = 0; i < 7; i++) { //traverse each column
+//      Connect4Column a = myGame.getColumn(i);
+//      int low = getLowestEmptyIndex(a)+1; //get top token
+//      slot check = a.getSlot(low);
+//      if(gap != -1) //there is already gap bigger than 1
+//      {
+//        trackH = 0;
+//
+//      }
+//      else if(gap == -1) { //there is not a gap yet
+//
+//      }
+//      else if(prev.isRed && check.isRed() && (prevPos == low)){ //if prev and curr are red AND same row
+//        trackH++;
+//      }
+//      if(trackH ==3 && (i+1 < 7 && getLowestEmptyIndex(myGame.getColumn(i+1)) == prevPos + 1){
+//
+//      }
+//
+//      if(!prev.isRed || !check.isRed() || )
+//      prevPos = low;
+//      prev = check;
+//    }
+
     return i;
   }
 
