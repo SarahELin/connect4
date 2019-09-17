@@ -150,34 +150,16 @@ Board indexes
    */
   public int theyCanWin() {
       Connect4Game a = new Connect4Game(myGame);
-      Connect4Game b = new Connect4Game(myGame);
-      Connect4Game c = new Connect4Game(myGame);
-      Connect4Game d = new Connect4Game(myGame);
-      Connect4Game e = new Connect4Game(myGame);
-      Connect4Game f = new Connect4Game(myGame);
-      Connect4Game g = new Connect4Game(myGame);
-
-      moveOnColumnOpp(0, a);
-      if (a.gameWon() == 'Y') return 0;
-
-      moveOnColumnOpp(1, b);
-      if (b.gameWon() == 'Y') return 1;
-
-      moveOnColumnOpp(2, c);
-      if (c.gameWon() == 'Y') return 2;
-
-      moveOnColumnOpp(3, d);
-      if(d.gameWon() == 'Y') return 3;
-
-      moveOnColumnOpp(4, e);
-      if(e.gameWon() == 'Y') return 4;
-
-      moveOnColumnOpp(5, f);
-      if(f.gameWon() == 'Y') return 5;
-
-      moveOnColumnOpp(6, g);
-      if (g.gameWon() == 'Y') return 6;
-
+      for (int i = 0; i < myGame.getColumnCount(); i++) {
+          a = new Connect4Game(myGame);
+          moveOnColumnOpp(i, a);
+          if (!iAmRed && a.gameWon() == 'R') {
+              return i;
+          }
+          if (iAmRed && a.gameWon() == 'Y') {
+              return i;
+          }
+      }
       return -1;
   }
 
