@@ -8,6 +8,7 @@ public class MyAgent extends Agent {
   /**
    * A random number generator to randomly decide where to place a token.
    */
+
   private Random random;
 
   /**
@@ -16,7 +17,8 @@ public class MyAgent extends Agent {
    * @param game The game the agent will be playing.
    * @param iAmRed True if the agent is Red, False if the agent is Yellow.
    */
-  public MyAgent(Connect4Game game, boolean iAmRed) { //red has 1st move
+
+  public MyAgent(Connect4Game game, boolean iAmRed) {
     super(game, iAmRed);
     random = new Random();
   }
@@ -110,7 +112,7 @@ public class MyAgent extends Agent {
    */
 
   /*
-
+Board indexes
   0
   1
   2
@@ -122,36 +124,20 @@ public class MyAgent extends Agent {
   */
   public int iCanWin() {
       Connect4Game a = new Connect4Game(myGame);
-      Connect4Game b = new Connect4Game(myGame);
-      Connect4Game c = new Connect4Game(myGame);
-      Connect4Game d = new Connect4Game(myGame);
-      Connect4Game e = new Connect4Game(myGame);
-      Connect4Game f = new Connect4Game(myGame);
-      Connect4Game g = new Connect4Game(myGame);
-
-      moveOnColumn(0,a);
-      if(a.gameWon() == 'R') return 0;
-
-      moveOnColumn(1,b);
-      if(b.gameWon() == 'R') return 1;
-
-      moveOnColumn(2,c);
-      if(c.gameWon() == 'R') return 2;
-
-      moveOnColumn(3,d);
-      if(d.gameWon() == 'R') return 3;
-
-      moveOnColumn(4,e);
-      if(e.gameWon() == 'R') return 4;
-
-      moveOnColumn(5,f);
-      if(f.gameWon() == 'R') return 5;
-
-      moveOnColumn(6,g);
-      if(g.gameWon() == 'R') return 6;
-
+      for (int i = 0; i < myGame.getColumnCount(); i++) {
+          a = new Connect4Game(myGame);
+          moveOnColumn(i, a);
+          if (!iAmRed && a.gameWon() == 'Y') {
+              return i;
+          }
+          if (iAmRed && a.gameWon() == 'R') {
+              return i;
+          }
+      }
       return -1;
   }
+
+
 
   /**
    * Returns the column that would allow the opponent to win.
@@ -171,26 +157,26 @@ public class MyAgent extends Agent {
       Connect4Game f = new Connect4Game(myGame);
       Connect4Game g = new Connect4Game(myGame);
 
-      moveOnColumnOpp(0,a);
-      if(a.gameWon() == 'Y') return 0;
+      moveOnColumnOpp(0, a);
+      if (a.gameWon() == 'Y') return 0;
 
-      moveOnColumnOpp(1,b);
-      if(b.gameWon() == 'Y') return 1;
+      moveOnColumnOpp(1, b);
+      if (b.gameWon() == 'Y') return 1;
 
-      moveOnColumnOpp(2,c);
-      if(c.gameWon() == 'Y') return 2;
+      moveOnColumnOpp(2, c);
+      if (c.gameWon() == 'Y') return 2;
 
-      moveOnColumnOpp(3,d);
+      moveOnColumnOpp(3, d);
       if(d.gameWon() == 'Y') return 3;
 
-      moveOnColumnOpp(4,e);
+      moveOnColumnOpp(4, e);
       if(e.gameWon() == 'Y') return 4;
 
-      moveOnColumnOpp(5,f);
+      moveOnColumnOpp(5, f);
       if(f.gameWon() == 'Y') return 5;
 
-      moveOnColumnOpp(6,g);
-      if(g.gameWon() == 'Y') return 6;
+      moveOnColumnOpp(6, g);
+      if (g.gameWon() == 'Y') return 6;
 
       return -1;
   }
