@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.ArrayList;
 /**
  * Describe your basic strategy here.
  * @author <your Github username>
@@ -10,6 +11,8 @@ public class MyAgent extends Agent {
    */
 
   private Random random;
+  private int mid;
+  private ArrayList<Integer> give;
 
   /**
    * Constructs a new agent, giving it the game and telling it whether it is Red or Yellow.
@@ -21,6 +24,7 @@ public class MyAgent extends Agent {
   public MyAgent(Connect4Game game, boolean iAmRed) {
     super(game, iAmRed);
     random = new Random();
+    mid = game.getColumnCount()/2;
   }
 
   /**
@@ -43,7 +47,23 @@ public class MyAgent extends Agent {
    *
    */
   public void move() {
+      int win = iCanWin();
+      int block = theyCanWin();
+      char[][] ref = myGame.getBoardMatrix();
 
+      // always go for winning move
+      if (win != -1) moveOnColumn(win);
+
+      // try to block opponent from winning
+      else if (block != -1) moveOnColumn(block);
+
+      // go for middle
+      else if (!myGame.getColumn(mid).getIsFull()) {
+        moveOnColumn(mid);
+      }
+
+
+      myGame.getColumn(0).getSlot(0);
   }
 
   /**
@@ -161,6 +181,16 @@ Board indexes
           }
       }
       return -1;
+  }
+
+  public boolean giveWin(int col) {
+      Connect4Game b = new Connect4Game(myGame);
+      moveOnColumn(col, b);
+      moveOnColumnOpp(col, b);
+      if (b.gameWon() == 'Y' && iAmRed) {
+          return true;
+      }
+      return false;
   }
 
   /**
