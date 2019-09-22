@@ -13,6 +13,7 @@ public class MyAgent extends Agent {
   private Random random;
   private int mid;
   private ArrayList<Integer> give;
+  private char[][] grid;
 
   /**
    * Constructs a new agent, giving it the game and telling it whether it is Red or Yellow.
@@ -49,7 +50,7 @@ public class MyAgent extends Agent {
   public void move() {
       int win = iCanWin();
       int block = theyCanWin();
-      char[][] ref = myGame.getBoardMatrix();
+      grid = myGame.getBoardMatrix();
 
       // always go for winning move
       if (win != -1) moveOnColumn(win);
@@ -61,10 +62,28 @@ public class MyAgent extends Agent {
       else if (!myGame.getColumn(mid).getIsFull()) {
         moveOnColumn(mid);
       }
-
-
-      myGame.getColumn(0).getSlot(0);
+//      else if (!myGame.getRedPlayedFirst()) {
+//          if (grid[0][mid - 1] == oppPiece()) moveOnColumn(mid + 1);
+//          else if (grid[0][mid + 1] == oppPiece()) moveOnColumn(mid - 1);
+//      }
+      else {
+          int rando = randomMove();
+          if(giveWin(rando)) {
+              while(!giveWin(rando)) rando = randomMove();
+          }
+          moveOnColumn(rando);
+      }
   }
+  public char oppPiece() {
+      if(iAmRed) return 'Y';
+      return 'R';
+  }
+
+  public char myPiece() {
+      if(iAmRed) return 'R';
+      return 'Y';
+  }
+
 
   /**
    * Drops a token into a particular column so that it will fall to the bottom of the column.
@@ -173,10 +192,7 @@ Board indexes
       for (int i = 0; i < myGame.getColumnCount(); i++) {
           a = new Connect4Game(myGame);
           moveOnColumnOpp(i, a);
-          if (!iAmRed && a.gameWon() == 'R') {
-              return i;
-          }
-          if (iAmRed && a.gameWon() == 'Y') {
+          if (a.gameWon() == oppPiece()) {
               return i;
           }
       }
@@ -186,10 +202,14 @@ Board indexes
   public boolean giveWin(int col) {
       Connect4Game b = new Connect4Game(myGame);
       moveOnColumn(col, b);
-      moveOnColumnOpp(col, b);
-      if (b.gameWon() == 'Y' && iAmRed) {
-          return true;
+      for(int i = 0; i < myGame.getColumnCount(); i++) {
+          moveOnColumnOpp(i, b);
+          if (b.gameWon() == oppPiece()) {
+              return true;
+          }
       }
+
+
       return false;
   }
 
