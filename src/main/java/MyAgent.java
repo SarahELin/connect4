@@ -1,8 +1,19 @@
 import java.util.Random;
-import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
- * Describe your basic strategy here.
- * @author <your Github username>
+ * block wins + go for wins
+ * Each move has a score based on how many 2 in a rows, 3 in a rows or blocks are made
+ * 2 piece blocks = 3 pts
+ * 2 in a row = 2 pts
+ * 3 in a row = 4 pts
+ * gives opp 3 in a row = -2 pts
+ * forbidden columns (throwWin + giveWin) = -5
+ *
+ * move in slot with highest score (MAKE SURE SEARCHING FOR HIGHEST starting from CENTER
+ * break ties --> whichever piece is closer to center
+ *
+ * @author <tortleX3>
  *
  */
 public class MyAgent extends Agent {
@@ -12,7 +23,10 @@ public class MyAgent extends Agent {
 
   private Random random;
   private int mid;
-  private ArrayList<Integer> give;
+  private int[] points;
+  private int cntr;
+
+  // tracks where the lowest to start strategy is
 
   /**
    * Constructs a new agent, giving it the game and telling it whether it is Red or Yellow.
@@ -25,6 +39,7 @@ public class MyAgent extends Agent {
     super(game, iAmRed);
     random = new Random();
     mid = game.getColumnCount()/2;
+    cntr = 2;
   }
 
   /**
@@ -47,9 +62,13 @@ public class MyAgent extends Agent {
    *
    */
   public void move() {
+      Arrays.fill(points, 0);
       int win = iCanWin();
       int block = theyCanWin();
       char[][] ref = myGame.getBoardMatrix();
+      points = new int[myGame.getColumnCount()];
+      boolean blocked = false;
+
 
       // always go for winning move
       if (win != -1) moveOnColumn(win);
@@ -57,13 +76,78 @@ public class MyAgent extends Agent {
       // try to block opponent from winning
       else if (block != -1) moveOnColumn(block);
 
-      // go for middle
-      else if (!myGame.getColumn(mid).getIsFull()) {
-        moveOnColumn(mid);
+      // go for middle first 2 moves
+      else if (cntr > 0) {
+          moveOnColumn(mid);
+          cntr--;
       }
 
+      // scoring system!
+      else {
+          for (int i = 0; i < myGame.getColumnCount(); i++) {
+              points[i] = horizontalScore(i, ref) + diagonalScore(i, ref) + horizontalBlock(i, ref) + diagonalBlock(i, ref);
+          }
+      }
+  }
+  // if adding piece makes a 2 in a row
+  public int horizontalScore(int col, char[][] grid) {
+      int r = getLowestEmptyIndex(myGame.getColumn(col));
+      int track = 0;
+      int c = col-3;
 
-      myGame.getColumn(0).getSlot(0);
+      while (c < col) {
+          for (int i = 0; i <= 3; i++) {
+              if (valid(r, c + i)) {
+                  // if one of opponent's pieces is there then start on the column to the left of it
+                  if (grid[r][c + i] == oppPlayer()) {
+                      c += i;
+                      break;
+                  }
+                  if (grid[r][c + i] == 'B') track++;
+                  if (grid[r][c + i] == myPiece()) track += 5;
+              }
+              // if start column is not valid then don't count it
+              else break;
+
+              // 1 of my piece and 3 blanks
+              if (track == 8) return 2;
+              // 2 of my pieces and 2 blanks
+              if (track == 12) return 4;
+              c++;
+              track = 0;
+          }
+      }
+      return 0;
+  }
+
+  public int diagonalScore(int col, char[][] grid) {
+      int r = getLowestEmptyIndex(myGame.getColumn(col));
+      int track = 0;
+      int c = col-3;
+
+      while (c < col) {
+          for (int i = 0; i <= 3; i++) {
+              if (valid(r, c + i)) {
+                  // if one of opponent's pieces is there then start on the column to the left of it
+                  if (grid[r][c + i] == oppPlayer()) {
+                      c += i;
+                      break;
+                  }
+                  if (grid[r][c + i] == 'B') track++;
+                  if (grid[r][c + i] == myPiece()) track += 5;
+              }
+              // if start column is not valid then don't count it
+              else break;
+
+              // 1 of my piece and 3 blanks
+              if (track == 8) return 2;
+              // 2 of my pieces and 2 blanks
+              if (track == 12) return 4;
+              c++;
+              track = 0;
+          }
+      }
+      return 0;
   }
 
   /**
@@ -87,6 +171,16 @@ public class MyAgent extends Agent {
         lowestEmptySlot.addYellow(); // Place a yellow token into the empty slot
       }
     }
+  }
+
+  public char myPiece() {
+      if(iAmRed) return 'R';
+      return 'Y';
+  }
+
+  public char oppPlayer() {
+      if (iAmRed) return 'Y';
+      return 'R';
   }
 
   /**
@@ -157,6 +251,12 @@ Board indexes
       return -1;
   }
 
+  // check if column and row are valid indexes
+  public static boolean valid(int r, int c) {
+      if (r < 0 || r >= myGame.getRowCount() || c < 0 || c >= myGame.getColumnCount()) return false;
+      return true;
+  }
+
 
 
   /**
@@ -187,11 +287,22 @@ Board indexes
       Connect4Game b = new Connect4Game(myGame);
       moveOnColumn(col, b);
       moveOnColumnOpp(col, b);
-      if (b.gameWon() == 'Y' && iAmRed) {
+      if ((b.gameWon() == 'Y' && iAmRed) || (b.gameWon() == 'R' && !iAmRed)) {
           return true;
       }
       return false;
   }
+
+  public int throwWin(int col) {
+      Connect4Game g = new Connect4Game(myGame);
+
+      // if I force them to block but doesn't benefit me
+      moveOnColumn(col, g);
+      moveOnColumn(col, g);
+      if((iAmRed && g.gameWon() == 'R') || (!iAmRed && g.gameWon() == 'Y')) return -5;
+
+      return 0;
+}
 
   /**
    * Returns the name of this agent.
