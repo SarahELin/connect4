@@ -68,10 +68,19 @@ public class MyAgent extends Agent {
 //      }
       else {
           int rando = randomMove();
+          int track = 0;
+          boolean force = false;
           if(giveWin(rando)) {
-              while(!giveWin(rando)) rando = randomMove();
+              for (int i = 0; i < myGame.getColumnCount(); i++) {
+                  if(myGame.getColumn(i).getIsFull()) track++;
+              }
+              if(track == myGame.getColumnCount()-1) {
+                  force = true;
+                  moveOnColumn(rando);
+              }
+              else while(!giveWin(rando)) rando = randomMove();
           }
-          moveOnColumn(rando);
+          if (force == false) moveOnColumn(rando);
       }
   }
   public char oppPiece() {
